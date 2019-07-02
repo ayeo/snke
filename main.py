@@ -5,64 +5,61 @@ FPS = 30
 SIZE = 30
 TAIL = 5
 
-pygame.init()
-pygame.mixer.init()
-screen = pygame.display.set_mode((SIZE * TAIL, SIZE * TAIL))
-pygame.display.set_caption("Snke")
-clock = pygame.time.Clock()
-
-class Player(pygame.sprite.Sprite):
+class Cube(pygame.sprite.Sprite):
     def __init__(self, position):
         pygame.sprite.Sprite.__init__(self)
         self.position = position
         self.image = pygame.Surface((TAIL, TAIL), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
-        self.rect.center = position
+        self.rect.topleft = tuple(np.array(self.position) * TAIL)
         self.image.fill((255, 255, 0))
+
+class Player():
+    body = []
+
+    def __init__(self, position, length):
         self.moving_x = 0
         self.moving_y = 1
+        for x in range(length):
+            self.body.append(position)
 
-    def update(self, *args):
+    def update(self):
+        position = self.body[0]
         if self.moving_y == 1:
-            self.position = tuple(np.array(self.position) + (0, 1 * TAIL))
+            position = tuple(np.array(position) + (0, 1))
         if self.moving_y == -1:
-            self.position = tuple(np.array(self.position) + (0, -1 * TAIL))
+            position = tuple(np.array(position) + (0, -1))
         if self.moving_x == 1:
-            self.position = tuple(np.array(self.position) + (1 * TAIL, 0))
+            position = tuple(np.array(position) + (1, 0))
         if self.moving_x == -1:
-            self.position = tuple(np.array(self.position) + (-1 * TAIL, 0))
+            position = tuple(np.array(position) + (-1, 0))
 
-        self.rect.center = self.position
+        self.body.pop()
+        self.body.insert(0, position)
 
     def move(self):
         keys = pygame.key.get_pressed()
-
         if keys[pygame.K_LEFT]:
             self.moving_x = -1
             self.moving_y = 0
-
         elif keys[pygame.K_RIGHT]:
             self.moving_x = 1
             self.moving_y = 0
-
         elif keys[pygame.K_UP]:
             self.moving_x = 0
             self.moving_y = -1
-
         elif keys[pygame.K_DOWN]:
             self.moving_x = 0
             self.moving_y = 1
 
 
+player = Player((10, 10), 3)
 
-
-
-player = Player((50, 50))
-sprites = pygame.sprite.Group()
-sprites.add(player)
-
-
-
+pygame.init()
+pygame.mixer.init()
+screen = pygame.display.set_mode((SIZE * TAIL, SIZE * TAIL))
+pygame.display.set_caption("Snke")
+clock = pygame.time.Clock()
 
 running = True
 while running:
@@ -72,16 +69,14 @@ while running:
             running = False
 
     screen.fill((0, 0, 0))
-
     player.move()
+    player.update()
 
-    keys = pygame.key.get_pressed()
-    events = pygame.event.get()
-    print(events)
+    sprites = pygame.sprite.Group()
+    for part in player.body:
+        cube = Cube(part)
+        sprites.add(cube)
 
-    for event in pygame.event.get():
-        print(event)
-    sprites.update()
     sprites.draw(screen)
 
     pygame.display.flip()
