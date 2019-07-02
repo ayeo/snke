@@ -1,0 +1,3 @@
+FPS = 30
+SIZE = 30
+TAIL = 20
