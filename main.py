@@ -1,7 +1,10 @@
 from Cube import *
 from Player import *
+from Board import *
 
-player = Player((10, 10), 30)
+player = Player((10, 10), 2)
+board = Board(SIZE)
+board.place_snack(player.body)
 
 pygame.init()
 pygame.mixer.init()
@@ -18,7 +21,7 @@ while running:
 
     screen.fill((0, 0, 0))
     player.move()
-    player.update()
+    player.update(board)
 
     sprites = pygame.sprite.Group()
     if (player.alive):
@@ -29,8 +32,10 @@ while running:
         cube = Cube(position, color)
         sprites.add(cube)
 
+    sprites.add(Cube(board.snack, (0, 255, 0)))
+
     sprites.draw(screen)
     pygame.display.flip()
-    pygame.time.delay(100)
+    pygame.time.delay(200)
 
 pygame.quit()

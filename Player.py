@@ -13,7 +13,11 @@ class Player():
             self.body.append(position)
 
 
-    def update(self):
+    def add_body(self):
+        self.body.append(self.body[-1])
+
+
+    def update(self, board):
         if (self.alive == False):
             return
 
@@ -26,6 +30,11 @@ class Player():
             position = tuple(np.array(position) + (1, 0))
         if self.moving_x == -1:
             position = tuple(np.array(position) + (-1, 0))
+
+        if (position == board.snack):
+            self.add_body()
+            board.place_snack(self.body)
+
 
         if (self.check_collision(position)):
             self.body.pop()
