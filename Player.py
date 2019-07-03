@@ -2,15 +2,14 @@ import numpy as np
 from settings import *
 
 class Player():
-    body = []
-    alive = True
-    action = 0
-
     def __init__(self, position, length):
         self.moving_x = 0
         self.moving_y = 1
         self.action = 3
-
+        self.body = []
+        self.alive = True
+        self.action = 0
+        self.length = 0
         for x in range(length):
             self.body.append(position)
 
@@ -20,6 +19,11 @@ class Player():
 
 
     def update(self, board) -> float:
+        self.length += 1
+
+        if (self.length == 1000):
+            return -10
+
         if (self.alive == False):
             return 0
 
@@ -36,13 +40,14 @@ class Player():
         if (position == board.snack):
             self.add_body()
             board.place_snack(self.body)
+            self.length = 0
             return 10
 
 
         if (self.check_collision(position)):
             self.body.pop()
             self.body.insert(0, position)
-            return .2
+            return .01
         else:
             self.alive = False
             return -100

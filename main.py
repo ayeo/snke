@@ -1,11 +1,11 @@
 from Cube import *
 from Env import Env
 from Player import *
-from Board import *
 
-player = Player((10, 10), 2)
-board = Board(SIZE)
-board.place_snack(player.body)
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import InputLayer
+
 
 pygame.init()
 pygame.mixer.init()
@@ -13,36 +13,65 @@ screen = pygame.display.set_mode((SIZE * TAIL, SIZE * TAIL))
 pygame.display.set_caption("Snke")
 clock = pygame.time.Clock()
 
-env = Env(player, board)
+num_episodes = 10
+y = 0.95
+eps = 0.5
+decay_factor = 0.999
 
-done = False
+env = Env(SIZE)
 
-while done == False:
-    clock.tick(FPS)
-    screen.fill((0, 0, 0))
+model = Sequential()
+model.add(InputLayer(batch_input_shape=(1, 3)))
+model.add(Dense(10, activation='sigmoid'))
+model.add(Dense(3, activation='linear'))
+model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
-        s, r, done = env.step(2)
-    elif keys[pygame.K_RIGHT]:
-        s, r, done = env.step(1)
-    else:
-        s, r, done = env.step(0)
+r_avg_list = []
+for i in range(num_episodes):
+    s = env.reset()
+    eps *= decay_factor
+    done = False
+    r_sum = 0
 
 
-    sprites = pygame.sprite.Group()
-    if (player.alive):
-        color = (255, 255, 0)
-    else:
-        color = (255, 0, 0)
-    for position in player.body:
-        cube = Cube(position, color)
-        sprites.add(cube)
+    while done == False:
+        reshape = np.array(s).reshape(1, 3)
+        s0_prediction = model.predict(reshape)
+        if np.random.random() < eps:
+            a = np.random.randint(0, 2)
+        else:
+            a = np.argmax(s0_prediction)
 
-    sprites.add(Cube(board.snack, (0, 255, 0)))
+        target = s0_prediction
+        new_s, r, done = env.step(a)
+        reshape1 = np.array(new_s).reshape(1, 3)
+        s1_prediction = model.predict(reshape1)
+        target[0][a] = r + y * np.max(s1_prediction)  # add reward from next step to chosen action
 
-    sprites.draw(screen)
-    pygame.display.flip()
-    pygame.time.delay(200)
+        model.fit(reshape, target, epochs=1, verbose=0)
+        s = new_s
+        r_sum += r
+
+        screen.fill((0, 0, 0))
+        clock.tick(FPS)
+        pygame.event.get()
+        # keys = pygame.key.get_pressed()
+        # if keys[pygame.K_LEFT]:
+        #     s, r, done = env.step(2)
+        # elif keys[pygame.K_RIGHT]:
+        #     s, r, done = env.step(1)
+        # else:
+        #     s, r, done = env.step(0)
+
+        env.sprites().draw(screen)
+        pygame.display.flip()
+        #pygame.time.delay(50)
+    r_avg_list.append(r_sum / 1000)
+
+
+import matplotlib.pyplot as plt
+
+plt.plot(r_avg_list)
+plt.show()
 
 pygame.quit()
