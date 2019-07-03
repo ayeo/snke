@@ -21,8 +21,8 @@ class Player():
     def update(self, board) -> float:
         self.length += 1
 
-        if (self.length == 1000):
-            return -10
+        if (self.length == 100):
+            return -100
 
         if (self.alive == False):
             return 0
@@ -41,16 +41,16 @@ class Player():
             self.add_body()
             board.place_snack(self.body)
             self.length = 0
-            return 10
+            return 100
 
 
         if (self.check_collision(position)):
             self.body.pop()
             self.body.insert(0, position)
-            return .01
+            return 1
         else:
             self.alive = False
-            return -100
+            return -1000
 
 
     def check_collision(self, position):

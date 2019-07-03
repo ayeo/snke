@@ -37,7 +37,29 @@ class Env():
         state = np.array([up, right, down, left])
         state = np.roll(state, -1 * self.player.action + 1)
         state = np.delete(state, 2)  # remove down
-        return state
+
+        xx = self.board.snack
+        up = 0
+        if (position[0] == xx[0] and position[1] > xx[1]):
+            up = 1
+
+        right = 0
+        if (position[1] == xx[1] and position[0] < xx[0]):
+            right = 1
+
+        down = 0
+        if (position[0] == xx[0] and position[1] < xx[1]):
+            down = 1
+
+        left = 0
+        if (position[1] == xx[1] and position[0] > xx[0]):
+            left = 1
+
+        food = np.array([up, right, down, left])
+        food = np.roll(food, -1 * self.player.action + 1)
+        food = np.delete(food, 2)  # remove down
+
+        return np.array([state, food]).reshape(6)
 
 
     def step(self, action: int):

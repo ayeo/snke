@@ -1,3 +1,3 @@
-FPS = 30
-SIZE = 30
+FPS = 60
+SIZE = 15
 TAIL = 20

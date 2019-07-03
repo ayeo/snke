@@ -13,7 +13,7 @@ screen = pygame.display.set_mode((SIZE * TAIL, SIZE * TAIL))
 pygame.display.set_caption("Snke")
 clock = pygame.time.Clock()
 
-num_episodes = 10
+num_episodes = 1000
 y = 0.95
 eps = 0.5
 decay_factor = 0.999
@@ -21,9 +21,10 @@ decay_factor = 0.999
 env = Env(SIZE)
 
 model = Sequential()
-model.add(InputLayer(batch_input_shape=(1, 3)))
-model.add(Dense(10, activation='sigmoid'))
-model.add(Dense(3, activation='linear'))
+model.add(InputLayer(batch_input_shape=(1, 6)))
+model.add(Dense(20, activation='relu'))
+model.add(Dense(20, activation='relu'))
+model.add(Dense(3, activation='sigmoid'))
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 
 r_avg_list = []
@@ -35,7 +36,7 @@ for i in range(num_episodes):
 
 
     while done == False:
-        reshape = np.array(s).reshape(1, 3)
+        reshape = np.array(s).reshape(1, 6)
         s0_prediction = model.predict(reshape)
         if np.random.random() < eps:
             a = np.random.randint(0, 2)
@@ -44,7 +45,7 @@ for i in range(num_episodes):
 
         target = s0_prediction
         new_s, r, done = env.step(a)
-        reshape1 = np.array(new_s).reshape(1, 3)
+        reshape1 = np.array(new_s).reshape(1, 6)
         s1_prediction = model.predict(reshape1)
         target[0][a] = r + y * np.max(s1_prediction)  # add reward from next step to chosen action
 
