@@ -1,14 +1,16 @@
-import pygame
 import numpy as np
 from settings import *
 
 class Player():
     body = []
     alive = True
+    action = 0
 
     def __init__(self, position, length):
         self.moving_x = 0
         self.moving_y = 1
+        self.action = 3
+
         for x in range(length):
             self.body.append(position)
 
@@ -17,9 +19,9 @@ class Player():
         self.body.append(self.body[-1])
 
 
-    def update(self, board):
+    def update(self, board) -> float:
         if (self.alive == False):
-            return
+            return 0
 
         position = self.body[0]
         if self.moving_y == 1:
@@ -34,13 +36,16 @@ class Player():
         if (position == board.snack):
             self.add_body()
             board.place_snack(self.body)
+            return 10
 
 
         if (self.check_collision(position)):
             self.body.pop()
             self.body.insert(0, position)
+            return .2
         else:
             self.alive = False
+            return -100
 
 
     def check_collision(self, position):
@@ -53,17 +58,29 @@ class Player():
         return True
 
 
-    def move(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            self.moving_x = -1
-            self.moving_y = 0
-        elif keys[pygame.K_RIGHT]:
-            self.moving_x = 1
-            self.moving_y = 0
-        elif keys[pygame.K_UP]:
+    def move(self, action):
+        allowed = [0, 2, 4]
+        action = allowed[action]
+
+        if (action == 0):
+            return
+
+        x = [1, 2, 3, 4]
+        action = np.roll(x, action - self.action - 2)[0]
+
+        if action == 1: #up
             self.moving_x = 0
             self.moving_y = -1
-        elif keys[pygame.K_DOWN]:
+            self.action = 1
+        if action == 2: #right
+            self.moving_x = 1
+            self.moving_y = 0
+            self.action = 2
+        if action == 3: #down
             self.moving_x = 0
             self.moving_y = 1
+            self.action = 3
+        if action == 4: #left
+            self.moving_x = -1
+            self.moving_y = 0
+            self.action = 4

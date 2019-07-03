@@ -1,4 +1,5 @@
 from Cube import *
+from Env import Env
 from Player import *
 from Board import *
 
@@ -12,16 +13,22 @@ screen = pygame.display.set_mode((SIZE * TAIL, SIZE * TAIL))
 pygame.display.set_caption("Snke")
 clock = pygame.time.Clock()
 
-running = True
-while running:
-    clock.tick(FPS)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+env = Env(player, board)
 
+done = False
+
+while done == False:
+    clock.tick(FPS)
     screen.fill((0, 0, 0))
-    player.move()
-    player.update(board)
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        s, r, done = env.step(2)
+    elif keys[pygame.K_RIGHT]:
+        s, r, done = env.step(1)
+    else:
+        s, r, done = env.step(0)
+
 
     sprites = pygame.sprite.Group()
     if (player.alive):
