@@ -10,7 +10,7 @@ class Env():
         self.size = size
 
     def reset(self):
-        self.player = Player((5, 5), 1)
+        self.player = Player((START_Y, START_X), INITIAL_LENGTH)
         self.board = Board(self.size)
         self.board.place_snack(self.player.body)
         return self.state()
