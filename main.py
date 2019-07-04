@@ -4,7 +4,6 @@ from Player import *
 
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.layers import InputLayer
 
 
 pygame.init()
@@ -13,18 +12,17 @@ screen = pygame.display.set_mode((SIZE * TAIL, SIZE * TAIL))
 pygame.display.set_caption("Snke")
 clock = pygame.time.Clock()
 
-num_episodes = 1000
+num_episodes = 200
 y = 0.95
-eps = 0.5
-decay_factor = 0.999
+eps = 0.2
+decay_factor = 0.9
 
 env = Env(SIZE)
 
 model = Sequential()
-model.add(InputLayer(batch_input_shape=(1, 6)))
-model.add(Dense(20, activation='relu'))
-model.add(Dense(20, activation='relu'))
-model.add(Dense(3, activation='sigmoid'))
+model.add(Dense(10, input_dim=6, activation='sigmoid'))
+model.add(Dense(18, activation='sigmoid'))
+model.add(Dense(3, activation='linear'))
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 
 r_avg_list = []
@@ -32,13 +30,10 @@ for i in range(num_episodes):
     s = env.reset()
     eps *= decay_factor
     done = False
-    r_sum = 0
-
-
     while done == False:
         reshape = np.array(s).reshape(1, 6)
         s0_prediction = model.predict(reshape)
-        if np.random.random() < eps:
+        if np.random.random() > eps:
             a = np.random.randint(0, 2)
         else:
             a = np.argmax(s0_prediction)
@@ -51,23 +46,27 @@ for i in range(num_episodes):
 
         model.fit(reshape, target, epochs=1, verbose=0)
         s = new_s
-        r_sum += r
 
         screen.fill((0, 0, 0))
         clock.tick(FPS)
         pygame.event.get()
-        # keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
         # if keys[pygame.K_LEFT]:
         #     s, r, done = env.step(2)
+        #     print(s)
         # elif keys[pygame.K_RIGHT]:
         #     s, r, done = env.step(1)
-        # else:
+        #     print(s)
+        # elif keys[pygame.K_UP]:
         #     s, r, done = env.step(0)
+        #     print(s)
+        # # else:
+        # #     s, r, done = env.step(0)
 
         env.sprites().draw(screen)
         pygame.display.flip()
-        #pygame.time.delay(50)
-    r_avg_list.append(r_sum / 1000)
+        pygame.time.delay(20)
+    r_avg_list.append(env.player.score)
 
 
 import matplotlib.pyplot as plt

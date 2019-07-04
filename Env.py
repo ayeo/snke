@@ -10,7 +10,7 @@ class Env():
         self.size = size
 
     def reset(self):
-        self.player = Player((10, 10), 2)
+        self.player = Player((5, 5), 1)
         self.board = Board(self.size)
         self.board.place_snack(self.player.body)
         return self.state()
@@ -19,19 +19,19 @@ class Env():
     def state(self):
         position = self.player.body[0]
         up = 0
-        if (position[1] == 0):
+        if (position[1] == 0 or list(position) + [-1, 0] in self.player.body):
             up = 1
 
         right = 0
-        if (position[0] == SIZE - 1):
+        if (position[0] == SIZE - 1 or list(position) + [0, 1] in self.player.body):
             right = 1
 
         down = 0
-        if (position[1] == SIZE - 1):
+        if (position[1] == SIZE - 1 or list(position) + [1, 0] in self.player.body):
             down = 1
 
         left = 0
-        if (position[0] == 0):
+        if (position[0] == 0 or list(position) + [0, -1] in self.player.body):
             left = 1
 
         state = np.array([up, right, down, left])

@@ -5,8 +5,8 @@ class Board():
         self.size = size
 
     def place_snack(self, body):
-        x = random.randint(0, self.size)
-        y = random.randint(0, self.size)
+        x = random.randint(0, self.size - 1)
+        y = random.randint(0, self.size - 1)
 
         if ((y, x) in body):
             return self.place_snack(body)

@@ -1,3 +1,3 @@
 FPS = 60
-SIZE = 15
+SIZE = 10
 TAIL = 20
