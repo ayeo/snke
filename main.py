@@ -47,6 +47,29 @@ for e in range(num_episodes):
     agent.replay_priority()
     agent.replay(128)
 
+    # done = False
+    # env.reset()
+    # while not done:
+    #     screen.fill((0, 0, 0))
+    #     clock.tick(FPS)
+    #     pygame.event.get()
+    #     keys = pygame.key.get_pressed()
+    #     if keys[pygame.K_LEFT]:
+    #         s, r, done = env.step(2)
+    #         print(s)
+    #     elif keys[pygame.K_RIGHT]:
+    #         s, r, done = env.step(1)
+    #         print(s)
+    #     elif keys[pygame.K_UP]:
+    #         s, r, done = env.step(0)
+    #         print(s)
+    #     else:
+    #         s, r, done = env.step(0)
+    #         print(s)
+    #
+    #     env.sprites().draw(screen)
+    #     pygame.display.flip()
+    #     pygame.time.delay(200)
 
 
 

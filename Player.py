@@ -2,10 +2,12 @@ import numpy as np
 from settings import *
 
 class Player():
+    moving_x = 0
+    moving_y = 0
+    action = 0
+
     def __init__(self, position, length):
-        self.moving_x = 0
-        self.moving_y = 1
-        self.action = 3
+
         self.body = []
         self.alive = True
         self.action = 0
@@ -14,19 +16,19 @@ class Player():
         for x in range(length):
             self.body.append(position)
 
+        self.apply_move(3)
+
 
     def add_body(self, positon):
         self.body.insert(0, positon)
-        #self.body.append(self.body[-1])
 
 
     def update(self, board) -> float:
         self.length += 1
 
-        if (self.length == 500):
+        if (self.length == 200):
             self.alive = False
             return 0
-
 
         if (self.alive == False):
             return 0
@@ -48,18 +50,17 @@ class Player():
             self.length = 0
             return 100
 
-
         if (self.check_collision(position)):
             self.body.pop()
             self.body.insert(0, position)
-            return -1
+            return -5
         else:
             self.alive = False
             return -100
 
 
     def check_collision(self, position):
-        if (position) in self.body:
+        if (position) in self.body[:len(self.body)-1]:
             return False
         if (position[0] < 0 or position[0] >= SIZE):
             return False
@@ -71,13 +72,15 @@ class Player():
     def move(self, action):
         allowed = [0, 2, 4]
         action = allowed[action]
-
         if (action == 0):
             return
 
         x = [1, 2, 3, 4]
         action = np.roll(x, action - self.action - 2)[0]
+        self.apply_move(action)
 
+
+    def apply_move(self, action):
         if action == 1: #up
             self.moving_x = 0
             self.moving_y = -1
