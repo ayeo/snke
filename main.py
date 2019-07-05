@@ -3,12 +3,11 @@ from Cube import *
 from Env import Env
 from Player import *
 
-num_episodes = 10
-r_avg_list = []
-env = Env(SIZE)
-
+env = Env()
 agent = DQN(6, 3)
-for e in range(num_episodes):
+
+r_avg_list = []
+for e in range(EPISODES):
     total_reward = 0
     done = False
     state = np.reshape(env.reset(), [1, 6])
@@ -23,7 +22,7 @@ for e in range(num_episodes):
 
     print("episode: {}/{}, score: {}, reward: {}".format(e, num_episodes, env.player.score, total_reward))
     r_avg_list.append(env.player.score)
-    agent.replay(32)
+    agent.replay(MINI_BATCH)
 
     # uncomment to play manually
     # done = False

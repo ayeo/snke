@@ -1,8 +1,17 @@
 FPS = 60
 SIZE = 15
-TAIL = 15
+TAIL = 25
 
 START_X = 6
 START_Y = 6
-
 INITIAL_LENGTH = 2
+EPISODES = 1000
+
+GAMMA = 0.95 # discount rate
+EPSILON = 1.0 # exploration rate
+EPSILON_DECAY = 0.995
+EPSILON_MIN = 0.01
+MEMORY = 2000 #experience replay
+MINI_BATCH = 32
+LEARNING_RATE = 0.001
+

@@ -1,21 +1,22 @@
+from settings import *
 from collections import deque
-
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 import random
 import numpy as np
 
+
 class DQN:
     def __init__(self, state_size, action_size):
         self.state_size = state_size
         self.action_size = action_size
-        self.memory = deque(maxlen=2000)
-        self.gamma = 0.95 # discount rate
-        self.epsilon = 1.0 # exploration rate
-        self.epsilon_min = 0.01
-        self.epsilon_decay = 0.995
-        self.learning_rate = 0.001
+        self.memory = deque(maxlen=MEMORY)
+        self.gamma = GAMMA
+        self.epsilon = EPSILON
+        self.epsilon_min = EPSILON_MIN
+        self.epsilon_decay = EPSILON_DECAY
+        self.learning_rate = LEARNING_RATE
         self.model = self._build_model()
 
     def _build_model(self):
@@ -42,8 +43,7 @@ class DQN:
         for state, action, reward, next_state, done in mb:
             target = reward
             if not done:
-              target = reward + self.gamma * \
-                       np.amax(self.model.predict(next_state)[0])
+              target = reward + self.gamma * np.amax(self.model.predict(next_state)[0])
             target_f = self.model.predict(state)
             target_f[0][action] = target
             self.model.fit(state, target_f, epochs=1, verbose=0)

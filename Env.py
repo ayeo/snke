@@ -11,8 +11,8 @@ class Env():
     pygame_inited = False
 
 
-    def __init__(self, size: int):
-        self.size = size
+    def __init__(self):
+        self.size = SIZE
 
 
     def reset(self):

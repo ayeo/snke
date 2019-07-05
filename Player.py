@@ -25,12 +25,12 @@ class Player():
     def update(self, env) -> float:
         self.length += 1
 
-        if (self.length == 200):
+        if (self.length == 500):
             self.alive = False
             return 0
 
-        if (self.alive == False):
-            return 0
+        # if (self.alive == False):
+        #     return 0
 
         position = self.body[0]
         if self.moving_y == 1:
@@ -47,15 +47,15 @@ class Player():
             self.score += 1
             env.place_snack(self.body)
             self.length = 0
-            return 100
+            return 1
 
         if (self.check_collision(position)):
             self.body.pop()
             self.body.insert(0, position)
-            return -5
+            return 0
         else:
             self.alive = False
-            return -100
+            return -1
 
 
     def check_collision(self, position):
