@@ -23,8 +23,10 @@ class Player():
     def update(self, board) -> float:
         self.length += 1
 
-        # if (self.length == 100):
-        #     return -10
+        if (self.length == 500):
+            self.alive = False
+            return 0
+
 
         if (self.alive == False):
             return 0
@@ -50,7 +52,7 @@ class Player():
         if (self.check_collision(position)):
             self.body.pop()
             self.body.insert(0, position)
-            return 1
+            return -1
         else:
             self.alive = False
             return -100
