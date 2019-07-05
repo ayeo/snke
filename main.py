@@ -55,5 +55,5 @@ import matplotlib.pyplot as plt
 plt.plot(r_avg_list)
 plt.show()
 
-agent.save_mode()
+agent.save_model()
 pygame.quit()

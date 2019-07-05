@@ -51,5 +51,5 @@ class DQN:
             self.epsilon *= self.epsilon_decay
 
 
-    def save_mode(self):
+    def save_model(self):
         self.model.save("snke.h5")
