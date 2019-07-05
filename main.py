@@ -20,7 +20,7 @@ for e in range(EPISODES):
         total_reward += reward
         env.render()
 
-    print("episode: {}/{}, score: {}, reward: {}".format(e, num_episodes, env.player.score, total_reward))
+    print("episode: {}/{}, score: {}, reward: {}".format(e, EPISODES, env.player.score, total_reward))
     r_avg_list.append(env.player.score)
     agent.replay(MINI_BATCH)
 
