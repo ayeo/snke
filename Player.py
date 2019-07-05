@@ -7,7 +7,6 @@ class Player():
     action = 0
 
     def __init__(self, position, length):
-
         self.body = []
         self.alive = True
         self.action = 0
@@ -23,7 +22,7 @@ class Player():
         self.body.insert(0, positon)
 
 
-    def update(self, board) -> float:
+    def update(self, env) -> float:
         self.length += 1
 
         if (self.length == 200):
@@ -43,10 +42,10 @@ class Player():
         if self.moving_x == -1:
             position = tuple(np.array(position) + (-1, 0))
 
-        if (position == board.snack):
+        if (position == env.snack):
             self.add_body(position)
             self.score += 1
-            board.place_snack(self.body)
+            env.place_snack(self.body)
             self.length = 0
             return 100
 

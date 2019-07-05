@@ -1,18 +1,23 @@
-from Board import Board
 from Cube import Cube
 from Player import Player
 from settings import *
+
 import numpy as np
 import pygame
+import random
 
 class Env():
+    snack = (0, 0)
+    pygame_inited = False
+
+
     def __init__(self, size: int):
         self.size = size
 
+
     def reset(self):
         self.player = Player((START_X, START_Y), INITIAL_LENGTH)
-        self.board = Board(self.size)
-        self.board.place_snack(self.player.body)
+        self.place_snack(self.player.body)
         return self.state()
 
 
@@ -38,7 +43,7 @@ class Env():
         state = np.roll(state, -1 * self.player.action + 1)
         state = np.delete(state, 2)  # remove down
 
-        xx = self.board.snack
+        xx = self.snack
         up = 0
         if (position[0] == xx[0] and position[1] > xx[1]):
             up = 1
@@ -64,12 +69,30 @@ class Env():
 
     def step(self, action: int):
         self.player.move(action)
-        r = self.player.update(self.board)
+        r = self.player.update(self)
         done = self.player.alive == False
         return self.state(), r, done
 
 
-    def sprites(self):
+    def render(self):
+        if (self.pygame_inited == False):
+            pygame.init()
+            pygame.mixer.init()
+            self.screen = pygame.display.set_mode((SIZE * TAIL, SIZE * TAIL))
+            pygame.display.set_caption("Snke")
+            self.clock = pygame.time.Clock()
+            self.pygame_inited = True
+
+        self.screen.fill((0, 0, 0))
+        pygame.event.get()
+        self.clock.tick(FPS)
+        self._sprites().draw(self.screen)
+        pygame.display.flip()
+        pygame.time.delay(50)
+
+
+
+    def _sprites(self):
         sprites = pygame.sprite.Group()
         if (self.player.alive):
             color = (255, 255, 0)
@@ -80,5 +103,15 @@ class Env():
             cube = Cube(position, color)
             sprites.add(cube)
 
-        sprites.add(Cube(self.board.snack, (0, 255, 0)))
+        sprites.add(Cube(self.snack, (0, 255, 0)))
         return sprites
+
+
+    def place_snack(self, body):
+        x = random.randint(0, self.size - 1)
+        y = random.randint(0, self.size - 1)
+
+        if ((y, x) in body):
+            return self.place_snack(body)
+        else:
+            self.snack = (y, x)
