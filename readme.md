@@ -1,7 +1,7 @@
-AI plays snake game
-=======================
+AI learns how to play snake game
+================================
 
-Solution using "Double" Deep Reinforcement Learning (Q-learning)
+The solution uses Deep Reinforcement Learning (Q-learning) approach.
 
 Result
 ------ 
